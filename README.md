@@ -30,3 +30,5 @@ python3 manage.py createsuperuser
 ```bash
 python3 manage.py runserver
 ```
+# License
+[![Licence](https://img.shields.io/github/license/Ileriayo/markdown-badges?style=for-the-badge)](./LICENSE)
