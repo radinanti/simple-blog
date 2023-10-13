@@ -16,7 +16,8 @@ as i said before its a **simple blog website**
 >category
 # Setup
 ## Install
-```bash
+
+```txt
 install the requirements.txt
 ```
 
