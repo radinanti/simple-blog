@@ -1,0 +1,21 @@
+{% extends 'appblog/base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    body{
+        background-color: #191825;;
+    }
+    a{
+        text-decoration: none;
+        color: #865DFF;
+    }
+    ul{
+        list-style-type: none;
+    }
+</style>
+    {% for item in category_menu  %}
+        <ul>
+            <li><h4><a href="{% url 'appblog:category' item|slugify %}">{{ item }}</a></h4></li>
+        </ul>
+            {% endfor %}
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends 'appblog/base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"  href="{% static 'appblog/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'appblog/profile_pop.css' %}">
+    <link rel="stylesheet" href="{% static 'appblog/top.css' %}">
+    <link rel="stylesheet" href="{% static 'appblog/posts.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+cgRdogZhrJQb3GCD8iBCwSLT5/BkNp2Lw+8vgc7l4x1skP" crossorigin="anonymous">
+
+    <title>Document</title>
+</head>
+<body>
+  
+  {% if user.is_authenticated %}
+        <div class="right"id="profile-menu-container">
+          <div class="profile" onclick="menuToggle();">
+            {% if user.usrpfp.profile %}
+                <img src="{{ user.usrpfp.profile.url }}">
+            {% else %}
+            <img src="{% static 'images/usr.png' %}">
+            {% endif %}
+              
+          </div>
+          <div class="menu">
+              <h3>{{ user.username }}</h3>
+              <ul>
+                  <li><img src="{% static 'images/j.png' %}"><a href="{% url 'appblog:profile' username=user.username %}">My Profile</a></li>
+                  <li><img src="{% static 'images/edit.png' %}"><a href="{% url 'appblog:edit_profile_page' pk=user.usrpfp.id username=user.username %}">Edit Profile</a></li>
+                  <li><img src="{% static 'images/setting.png' %}"><a href="{% url 'appblog:edit_profile' %}">Settings</a></li>
+                  <li><img src="{% static 'images/help.png' %}"><a href="#$">Help</a></li>
+                  <li><img src="{% static 'images/logout.png' %}"><a href="{% url 'accounts:logout' %}">Logout</a></li>
+              </ul>
+          </div>
+          </div>
+          {% endif %}
+<script>
+    function menuToggle(){
+        const toggleMenu = document.querySelector('.menu');
+        toggleMenu.classList.toggle('active');
+    }
+  </script>
+  <br>
+  <br>
+  <div class="card-center">
+  <div class="card">
+    {% if usr_page.profile %}
+    <img src="{{ usr_page.profile.url }}" width="100" height="100">
+  {% else %}
+  <img src="{% static 'images/j.png' %}" width="100" height="100">
+  {% endif %}
+      <div class="text">
+        <h2><span class="id">{{ usr_page }}</span></h2>
+        <h3>{{ usr_page.bio }}</h3>
+        <ul class="wrapper">
+          {% if usr_page.website_url %}
+          <li class="icon website">
+              <a href="{{ usr_page.website_url }}" target="_blank">
+                  <i class="fa fa-globe"></i>
+                  <span class="tooltip">Website</span>
+              </a>
+          </li>
+          {% endif %}
+          {% if usr_page.twitter_url %}
+          <li class="icon twitter">
+              <a href="{{ usr_page.twitter_url }}" target="_blank">
+                  <i class="fa fa-twitter"></i>
+                  <span class="tooltip">Twitter</span>
+              </a>
+          </li>
+          {% endif %}
+          {% if usr_page.instagram_url %}
+          <li class="icon instagram">
+              <a href="{{ usr_page.instagram_url }}" target="_blank">
+                  <i class="fa fa-instagram"></i>
+                  <span class="tooltip">Instagram</span>
+              </a>
+          </li>
+          {% endif %}
+          {% if usr_page.github_url %}
+          <li class="icon github">
+              <a href="{{ usr_page.github_url }}" target="_blank">
+                  <i class="fa fa-github"></i>
+                  <span class="tooltip">Github</span>
+              </a>
+          </li>
+          {% endif %}
+      </ul>
+      
+      </div>
+    </div>
+  </div>
+
+      <div class="container">
+        <h1 class="heading">{{ usr_page }} Blogs</h1>
+
+        <div class="box-container">
+            {% for post in user_posts %}
+                <div class="box">
+                    {% if post.header_image %}
+                    <img src="{{ post.header_image.url }}">
+                    {% else %}
+                    <img src="{% static 'images/blank.webp' %}">
+                    {% endif %}
+                    <h3>{{ post.title }}</h3>
+                    <p>{{ post.text|slice:":150"|safe }}</p>
+                    <p class="info">Category: <a href="{% url 'appblog:category' post.category|slugify %}">{{ post.category }}</a></p>
+                    <p class="info">Author: <span>{{ post.author }}</span></p>
+                    <p class="info">{{ post.create_at }}</p>
+                    {% if user.is_authenticated %}
+                        {% if user.id == usr_page.user.id %}
+                            <a href="{% url 'appblog:edit_post' pk=post.pk %}">(Edit)</a>
+                            <a href="{% url 'appblog:delete_post' pk=post.pk %}">(Delete)</a>
+                        {% endif %}
+                    {% endif %}
+                    <div><a href="{% url 'appblog:article-detail' pk=post.pk name=post.title|slugify %}" class="btn">Read More</a>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+      const colorChangeButton = document.getElementById("color-change-button");
+      let isActive = false;
+    
+      colorChangeButton.addEventListener("click", () => {
+        isActive = !isActive;
+        
+        if (isActive) {
+          colorChangeButton.classList.add("active");
+          colorChangeButton.style.color = "#333";
+          colorChangeButton.style.backgroundColor = "#99AEBB";
+        } else {
+          colorChangeButton.classList.remove("active");
+          colorChangeButton.style.color = "#fff"; 
+          colorChangeButton.style.backgroundColor = ""; 
+        }
+      });
+    </script> 
+        <a href="#" class="to-top">
+            <i class="fa fa-chevron-up"></i>
+          </a>
+          <script>
+            const toTop = document.querySelector(".to-top");
+    
+    window.addEventListener("scroll", () => {
+      if (window.pageYOffset > 100) {
+        toTop.classList.add("active");
+      } else {
+        toTop.classList.remove("active");
+      }
+    })
+          </script>
+{% endblock %}
+</body>
+</html>

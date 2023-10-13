@@ -1,0 +1,32 @@
+{% extends 'appblog/base.html' %}
+{% load static %}
+{% block content %}
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'appblog/form.css' %}">
+</head>
+<body>{% if user.is_authenticated %}
+        {% if user.id == post.author.id %}
+            <form class="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+            <div class="title">Editing Post</div>
+        {{ form.media }}
+        {{ form }}
+            <button class="button"><span>Edit</span></button>
+                </form>
+            </div>
+        {% else %}
+            mf you are not alow to be here
+        {% endif %}
+    {% else %}
+    oops you don't have perm
+    {% endif %}    
+</body>
+</html>
+
+</body>
+</html>
+{% endblock %}

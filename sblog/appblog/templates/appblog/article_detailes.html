@@ -1,0 +1,213 @@
+{% extends 'appblog/base.html' %}
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'appblog/profile_pop.css' %}">
+    <link rel="stylesheet" href="{% static 'appblog/top.css' %}">
+    <link rel="stylesheet" href="{% static 'appblog/article.css' %}">
+</head>
+<body>
+    {% if user.is_authenticated %}
+        <div class="right"id="profile-menu-container">
+          <div class="profile" onclick="menuToggle();">
+            {% if user.usrpfp.profile %}
+                <img src="{{ user.usrpfp.profile.url }}">
+            {% else %}
+            <img src="{% static 'images/usr.png' %}">
+            {% endif %}
+                    
+                </div>
+                <div class="menu">
+                    <h3>{{ user.username }}</h3>
+                    <ul>
+                        <li><img src="{% static 'images/j.png' %}"><a href="{% url 'appblog:profile' username=user.username %}">My Profile</a></li>
+                        <li><img src="{% static 'images/edit.png' %}"><a href="{% url 'appblog:edit_profile_page' pk=user.usrpfp.id username=user.username %}">Edit Profile</a></li>
+                        <li><img src="{% static 'images/setting.png' %}"><a href="{% url 'appblog:edit_profile' %}">Settings</a></li>
+                        <li><img src="{% static 'images/help.png' %}"><a href="#$">Help</a></li>
+                        <li><img src="{% static 'images/logout.png' %}"><a href="{% url 'accounts:logout' %}">Logout</a></li>
+                    </ul>
+                </div>
+                </div>
+                {% endif %}
+      <script>
+          function menuToggle(){
+              const toggleMenu = document.querySelector('.menu');
+              toggleMenu.classList.toggle('active');
+          }
+      </script>
+    <div style="text-align: center;">
+      <h1>{{ post.title }}</h1>
+      <h4>by: <span class="author"><a href="{% url 'appblog:profile' username=post.author.username %}">{{ post.author }}</a></span> - {{ post.create_at }}
+          {% if user.is_authenticated %}
+              {% if user.id == post.author.id %}
+                  - <a href="{% url 'appblog:edit_post' pk=post.pk %}" class="link">(edit)</a>
+                  <a href="{% url 'appblog:delete_post' pk=post.pk %}" class="link">(delete)</a>
+              {% endif %}
+          {% endif %}
+      </h4>
+      <hr>
+      {% if post.header_image %}
+          <img class="banner" src="{{ post.header_image.url }}"><br><br>
+      {% endif %}
+
+      <h4 class="blog-text">{{ post.text|safe }}
+        <div class="container">
+            <div class="icons-3">
+            <div class="actions">
+            <form method="POST" action="{% url 'appblog:lk_post' pk=post.pk name=post.title|slugify %}">
+                {% csrf_token %}
+                    {% if liked %}
+                        <div class="most">
+                        <button type="submit" name="post_id" value="{{ post.id }}" class="like"><i class="fa fa-heart" style="color: #ff0000;font-size:36px;"font-size:36px""></i></button> {{ total_likes }}
+                        </div>
+                    {% else %}
+                        <div class="most">    
+                        <button type="submit" name="post_id" value="{{ post.id }}" class="like"><i class="fa fa-regular fa-heart fa-xl" style="font-size:36px;color: rgb(255, 255, 255);"></i></button> {{ total_likes }}
+                        </div>
+                    {% endif %}
+            </form>
+            <div class="spacer"></div>
+                <!-- Comment Icon -->
+                <div class="comment-icon" id="commentIcon"><i class="fa fa-comments"></i> Comment</div>
+                <div class="spacer"></div>
+                <div class="share-icon" id="shareIcon" style="position: relative; margin-right: 10px;"><i class="fa fa-share"></i> Share</div>
+            </div>                  
+                <div class="share-dialog" id="shareDialog">
+                    Share this blog in:
+                    <div class="share-options">
+                      <button class="twitter-icon" id="shareTwitter">Share on Twitter  <i aria-hidden="true" class="fa-brands fa-twitter" style="color: rgb(255, 255, 255);"></i></button>
+                      <button class="reddit-icon" id="shareReddit">Share on Reddit  <i class="fa-brands fa-reddit-alien" style="color: #ffffff;"></i></button>
+                    </div>
+                    <button class="close-btn" id="closeShareDialog">Close</button>
+                  </div>
+                  <script>
+                    // JavaScript to toggle the share dialog
+        const shareIcon = document.getElementById('shareIcon');
+        const shareDialog = document.getElementById('shareDialog');
+        const closeShareDialog = document.getElementById('closeShareDialog');
+        const shareTwitter = document.getElementById('shareTwitter');
+        const shareFacebook = document.getElementById('shareReddit');
+        
+        shareIcon.addEventListener('click', () => {
+          shareDialog.style.display = 'block';
+        });
+        
+        closeShareDialog.addEventListener('click', () => {
+          shareDialog.style.display = 'none';
+        });
+        
+        // Add functionality to share on Twitter and Facebook
+        shareTwitter.addEventListener('click', () => {
+        const currentUrl = window.location.href;
+        const shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`;
+        window.open(shareUrl, '_blank');
+        });
+        
+        shareFacebook.addEventListener('click', () => {
+            const currentUrl = window.location.href;
+            const shareUrl = `https://www.reddit.com/submit?url=${encodeURIComponent(currentUrl)}`;
+            window.open(shareUrl, '_blank');
+                    });
+        
+                  </script>
+            </div>
+                <!-- Comments Section -->
+                <div class="comments-container" id="commentsSection">
+                    <h1>Comments</h1>
+                    <div class="comment-main-level">
+                        {% if user.is_authenticated %}
+                        <form method="POST">
+                            {% csrf_token %}
+                            <textarea class="comment-text" name="comment" rows="4" placeholder="Write your comment..."></textarea>
+                            <button class="comment-btn" type="submit"><span>Comment</span></button>
+                        </form>
+                        <script>
+                            var usr = "{{ user.id }}"; 
+                            document.getElementById("userid").value = usr;
+                        </script>
+                        {% endif %}
+                        <hr>
+                        <div class="comment-list-container">
+                            <ul class="comment-list">
+                                {% for comment in post.comments.all %}
+                                <li>
+                                    <strong><a class="comment-links" href="{% url 'appblog:profile' comment.user.username %}">{{ comment.user.username }}</a> - {{ comment.date_added }}</strong> 
+                                    <p>{{ comment.text }}</p>
+                                    {% if user.is_authenticated and user == comment.user %}
+                                    <form class="form-delete" method="POST" action="{% url 'appblog:delete-comment' comment.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                                        <button class="delete-btn" type="submit">
+                                            <svg viewBox="0 0 448 512" class="svgIcon"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path></svg>
+                                          </button>
+                                    </form>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+        
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/js/all.min.js"></script>
+        
+            <script>
+                // JavaScript to toggle the comments section, comment form, and reply form with fade-in/fade-out animation
+                const commentIcon = document.getElementById('commentIcon');
+                const commentsSection = document.getElementById('commentsSection');
+                const commentForm = document.getElementById('commentForm');
+                const replyIcons = document.querySelectorAll('.reply-icon');
+        
+                commentIcon.addEventListener('click', () => {
+                    if (commentsSection.style.display === 'block') {
+                        commentsSection.style.display = 'none';
+                        commentForm.style.display = 'none';
+                    } else {
+                        commentsSection.style.display = 'block';
+                        commentForm.style.display = 'block';
+                    }
+                });
+        
+                replyIcons.forEach((replyIcon) => {
+                    replyIcon.addEventListener('click', () => {
+                        const replyForm = replyIcon.parentElement.querySelector('.reply-form');
+                        if (replyForm.style.display === 'block') {
+                            replyForm.style.display = 'none';
+                        } else {
+                            replyForm.style.display = 'block';
+                        }
+                    });
+                });
+            </script>
+      </h4>
+  </div>
+<br> <br>
+
+<br>
+<br>
+
+<a href="#" class="to-top">
+  <i class="fa fa-chevron-up"></i>
+</a>
+<script>
+  const toTop = document.querySelector(".to-top");
+
+window.addEventListener("scroll", () => {
+if (window.pageYOffset > 100) {
+toTop.classList.add("active");
+} else {
+toTop.classList.remove("active");
+}
+})
+</script>
+{% endblock %}
+
+</body>
+</html>

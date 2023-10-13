@@ -1,0 +1,30 @@
+{% extends 'appblog/base.html' %}
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'appblog/form.css' %}">
+</head>
+<body>{% if user.is_authenticated %}
+    <form action="" method="POST" enctype="multipart/form-data" >
+        <div class="title"><h2>Create Post </h2></div>
+        {% csrf_token %}
+   {{ form.media }} 
+   {{ form }} 
+    
+  <button class="button"><span>Post</span></button>
+    </form>
+    {% else %}
+    oops you don't have perm
+    {% endif %}
+    <script>
+        var usr = "{{ user.id }}"; 
+         document.getElementById("userid").value = usr;
+     </script>
+</body>
+</html>
+{% endblock %}

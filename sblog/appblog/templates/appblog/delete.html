@@ -1,0 +1,51 @@
+{% extends 'appblog/base.html' %}
+{% load static %}
+{% block content %}
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'appblog/delete.css' %}">
+</head>
+<body>{% if user.is_authenticated %}
+        {%  if user.id == post.author.id  %}
+          <h3>Delete: {{ post.title }}</h3><br>
+          <button class="button" onclick="document.getElementById('delete').style.display='block'"><span>Delete</span></button>
+
+          <div id="delete" class="bg">
+            <span onclick="document.getElementById('delete').style.display='none'" class="close" title="Close Modal">×</span>
+            <form class="bg-content" method="POST">
+              {% csrf_token %}
+              <div class="container">
+                <h1>Delete post</h1>
+                <p>Are you sure you want to delete the post?</p>
+                <div class="fix">
+                  <button type="button" onclick="document.getElementById('delete').style.display='none'" class="cancel">Cancel</button>
+                  <button  onclick="document.getElementById('delete').style.display='none'" class="delete">Delete</button>
+                </div>
+              </div>
+            </form>
+          </div>
+          
+    <script>
+    var modal = document.getElementById('delete');
+    
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+    </script>
+        {% else %}
+        its not ur post to edit stupid!!!
+        {% endif %}
+    {% else %}
+    oops you don't have perm
+    {% endif %}
+</body>
+</html>
+
+</body>
+</html>
+{% endblock %}

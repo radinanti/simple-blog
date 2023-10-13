@@ -1,0 +1,173 @@
+{% extends 'appblog/base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'appblog/home.css' %}">
+    <link rel="stylesheet" href="{% static 'appblog/profile_pop.css' %}">
+    <link rel="stylesheet" href="{% static 'appblog/top.css' %}">
+    <link rel="stylesheet" href="{% static 'appblog/posts.css' %}">
+</head>
+<body>
+    {% if user.is_authenticated %}
+        <div class="right"id="profile-menu-container">
+          <div class="profile" onclick="menuToggle();">
+            {% if user.usrpfp.profile %}
+                <img src="{{ user.usrpfp.profile.url }}">
+            {% else %}
+            <img src="{% static 'images/usr.png' %}">
+            {% endif %}
+                    
+                </div>
+                <div class="menu">
+                    <h3>{{ user.username }}</h3>
+                    <ul>
+                        <li><img src="{% static 'images/j.png' %}"><a href="{% url 'appblog:profile' username=user.username %}">My Profile</a></li>
+                    {% if user.usrpfp.id %}
+                        <li><img src="{% static 'images/edit.png' %}"><a href="{% url 'appblog:edit_profile_page' pk=user.usrpfp.id username=user.username %}">Edit Profile</a></li>
+                    {% else %}
+                    <li><img src="{% static 'images/edit.png' %}"><a href="{% url 'appblog:create_profile_page' username=user.username %}">Create Profile</a></li>
+                    {% endif %}
+                        <li><img src="{% static 'images/setting.png' %}"><a href="{% url 'appblog:edit_profile' %}">Settings</a></li>
+                        <li><img src="{% static 'images/help.png' %}"><a href="#$">Help</a></li>
+                        <li><img src="{% static 'images/logout.png' %}"><a href="{% url 'accounts:logout' %}">Logout</a></li>
+                    </ul>
+                </div>
+                </div>
+                {% endif %}
+      <script>
+          function menuToggle(){
+              const toggleMenu = document.querySelector('.menu');
+              toggleMenu.classList.toggle('active');
+          }
+      </script>
+        <div class="container">
+            <h1 class="heading">New Blogs</h1>
+    
+            <div class="box-container">
+                {% for post in object_list|slice:":9" %}
+                    <div class="box">
+                        {% if post.header_image %}
+                            <img src="{{ post.header_image.url }}">
+                        {% else %}
+                            <img src="{% static 'images/elyad.jpg' %}">
+                        {% endif %}
+                        <h3><a href="{% url 'appblog:article-detail' pk=post.pk name=post.title|slugify %}">{{ post.title }}</a></h3>
+                        <p>{{ post.text|slice:":150"|safe }}</p>
+                        <p>Category: <a href="{% url 'appblog:category' post.category|slugify %}">{{ post.category }}</a></p>
+                        <p>Author: {{ post.author }}</p>
+                        <p>{{ post.create_at }}</p>
+                        {% if user.is_authenticated %}
+                            {% if user.id == post.author.id %}
+                                <a href="{% url 'appblog:edit_post' pk=post.pk %}">(Edit)</a>
+                                <a href="{% url 'appblog:delete_post' pk=post.pk %}">(Delete)</a>
+                            {% endif %}
+                        {% endif %}
+                        <div><a href="{% url 'appblog:article-detail' pk=post.pk name=post.title|slugify %}" class="btn">Read More</a>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <section id="about">
+            <div class="about-1">
+                <h1>Lorem</h1>
+                <p> 
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+            </div>
+            <div id="about-2">
+                <div class="content-box-lg">
+                    <div class="container">
+                        <div class="row">
+                            <div>
+                                <div class="about-item text-center">
+                                    <i class="fa fa-book"></i>
+                                    <h3>Lorem</h3>
+                                    <hr>
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="about-item text-center col">
+                                    <i class="fa fa-globe"></i>
+                                    <h3>Lorem</h3>
+                                    <hr>
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="about-item text-center">
+                                    <i class="fa fa-pencil"></i>
+                                    <h3>Lorem</h3>
+                                    <hr>
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <form method="POST" id="contact" action="{% url 'appblog:contact_us' %}">
+        {% csrf_token %}
+        <div class="contact">
+            <div class="row">
+                    <h1 class="contact-title">contact us</h1>
+            </div>
+            <div class="row">
+                    <h4 class="contact-text" style="text-align:center">We really like to hear feedback!</h4>
+            </div>
+            <div class="row input-contact">
+                    <div class="col-xs-12">
+                        <div class="styled-input wide">
+                            <input name="name" type="text" required />
+                            <label>Name</label> 
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="styled-input wide">
+                            <input name="email" type="text" required />
+                            <label>Email</label> 
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="styled-input wide">
+                            <textarea name="message" required></textarea>
+                            <label>Message</label>
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <button class="contact-submit" type="submit">
+                            <span class="txt">submit</span>
+                            <span class="txt2">sent!</span>
+                            <span class="loader-container">
+                              <span class="loader"></span>
+                            </span>
+                          </button>
+                    </div>
+            </div>
+        </div>
+    </form>
+    <a href="#" class="to-top">
+        <i class="fa fa-chevron-up"></i>
+      </a>
+      <script>
+        const toTop = document.querySelector(".to-top");
+
+window.addEventListener("scroll", () => {
+  if (window.pageYOffset > 100) {
+    toTop.classList.add("active");
+  } else {
+    toTop.classList.remove("active");
+  }
+})
+      </script>
+{% endblock %}
+</body>
+</html>

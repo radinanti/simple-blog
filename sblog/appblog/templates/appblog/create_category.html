@@ -1,0 +1,28 @@
+{% extends 'appblog/base.html' %}
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'appblog/form.css' %}">
+</head>
+<body>{% if user.is_authenticated %}
+    <form class="" action="" method="POST">
+        <div class="title"><h2>add category </h2></div>
+        {% csrf_token %}
+
+   {{ form }} 
+    
+      
+    
+  <button class="button"><span>Create</span></button>
+    </form>
+    {% else %}
+    oops you don't have perm
+    {% endif %}
+</body>
+</html>
+{% endblock %}

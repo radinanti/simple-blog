@@ -1,0 +1,176 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body {margin:0;font-family:Arial}
+::selection{
+  background-color:rgb(100, 100, 100);
+}
+.top {
+  overflow: hidden;
+  background-image: url('{% static "images/navbar1.avif" %}');
+}
+
+.top a {
+  float: left;
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+.top .icon {
+  display: none;
+}
+
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+.dropdown .dropbtn {
+  font-size: 17px;    
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #865DFF;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  float: none;
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.top a:hover, .dropdown:hover .dropbtn {
+  background-color: #865DFF;
+  text-decoration: none;
+  color: white;
+}
+
+.dropdown-content a:hover {
+  background-color: #E384FF;
+  color: black;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+@media screen and (max-width: 768px) {
+  .top a:not(:first-child), .dropdown .dropbtn {
+    display: none;
+  }
+  .top a.icon {
+    float: right;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .top.responsive {position: relative;}
+  .top.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .top.responsive a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+  .top.responsive .dropdown {float: none;}
+  .top.responsive .dropdown-content {position: relative;}
+  .top.responsive .dropdown .dropbtn {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+}
+@media screen and (min-width:601px){
+  #forres{
+    display: none;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="top" id="mtop">
+  <a href="{% url 'appblog:index' %}" class="home">Home</a>
+  {% if request.resolver_match.url_name == 'index' %}
+  <a href="#about">About</a>
+  <a href="javascript:void(0);" onclick="scrollToSection('contact')">Contact</a>
+{% else %}
+  <a href="{% url 'appblog:index' %}#about">About</a>
+  <a href="{% url 'appblog:index' %}#contact">Contact</a>
+  {% endif %}
+  <div class="dropdown">
+    {% if list_category %}
+    <button class="dropbtn">Categories 
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+      {% for x in list_category %}
+        <a href="{% url 'appblog:category' x|slugify %}">{{ x }}</a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <a id="cat" href="{% url 'appblog:category-list' %}">Categories</a>
+    {% endif %}
+  </div> 
+  {% if user.is_authenticated %}
+        <a href="/post">create Post</a>
+        <a id="forres" href="{% url 'appblog:profile' username=user.username %}">My Profile</a>
+        <a id="forres" href="{% url 'appblog:edit_profile' %}">Edit Profile</a>
+        <a id="forres" href="{% url 'appblog:edit_profile' %}$">Settings</a>
+        <a id="forres" href="{% url 'accounts:logout' %}">Logout</a>
+        {% else %}
+        <a href="{% url 'accounts:login' %}">Login</a>
+        <a href="{% url 'accounts:register' %}">Register</a>
+        {% endif %}
+  
+        <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="myFunction()">&#9776;</a>
+
+        </div>
+<script>
+function myFunction() {
+  var x = document.getElementById("mtop");
+  if (x.className === "top") {
+    x.className += " responsive";
+  } else {
+    x.className = "top";
+  }
+}
+</script>
+<script>
+  function scrollToSection(sectionId) {
+  var sectionElement = document.getElementById(sectionId);
+  if (sectionElement) {
+    sectionElement.scrollIntoView({ behavior: "smooth" });
+  }
+}
+</script>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

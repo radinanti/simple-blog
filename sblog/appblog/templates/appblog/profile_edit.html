@@ -1,0 +1,53 @@
+{% extends 'appblog/base.html' %}
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'appblog/edit_profile.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Document</title>
+</head>
+<body>
+    {% if user.is_authenticated %}
+
+<div class="container">
+    <form class="form" action="" method="POST">
+        <div class="title"><h2>Edit Profile </h2></div>
+        {% csrf_token %} 
+        <div class="input-container">
+        <i class="fa fa-user icon"></i>
+        {{ form.username }}
+        {{ form.username.errors }}
+        </div>
+
+        <div class="input-container">
+        <i class="fa fa-envelope icon"></i>
+        {{ form.email }}
+        {{ form.email.errors }}
+        </div>
+
+        <div class="input-container">
+        {{ form.last_login.label_tag }}
+        {{ form.last_login }}
+        {{ form.last_login.errors }}
+        </div>
+
+        <div class="input-container">
+        {{ form.date_joined.label_tag }}
+        {{ form.date_joined }}
+        {{ form.date_joined.errors }}
+        </div>
+
+        <input class="input-field" type="submit" value="edit Profile">
+    </form>
+</div>    
+
+    {% else %}
+    oops you don't have perm
+    {% endif %}
+</body>
+</html>
+{% endblock %}
