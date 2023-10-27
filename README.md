@@ -14,7 +14,7 @@ as i said before its a **simple blog website**
 ## Install
 
 ```txt
-install the requirements.txt
+pip install -r requirements.txt
 ```
 
 ## run
